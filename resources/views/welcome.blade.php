@@ -50,6 +50,12 @@
               </svg>
           </div>
   </div>
+  <div class="flex items-center justify-center h-screen bg-gray-300" id="register">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2 mt-20">
+      <h1 class="text-2xl font-semibold b-4">Registration</h1>
+      @livewire('home')
+    </div>
+  </div>
   <script>
      function Menu(e) {
             let list = document.querySelector('ul');
