@@ -84,8 +84,10 @@ class StudentResource extends Resource
                 TextColumn::make('name')
                     ->label('Nama Siswa'),
                 TextColumn::make("gender")
+                    ->toggleable(isToggledHiddenByDefault:true)
                     ->label("Jenis Kelamin"),
                 TextColumn::make("birthday")
+                    ->toggleable(isToggledHiddenByDefault:true)
                     ->label("Tanggal Lahir"),
                 TextColumn::make("religion")
                     ->label("Agama"),
@@ -94,6 +96,7 @@ class StudentResource extends Resource
                 Tables\Columns\ImageColumn::make('profile')
                     ->label('Foto Siswa'),
                 TextColumn::make('status')
+                    ->toggleable(isToggledHiddenByDefault:true)
                     ->label('Status')
                     ->formatStateUsing(fn(string $state): string => ucwords("{$state}")),
             ])
@@ -106,14 +109,21 @@ class StudentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    BulkAction::make("Accept")
+                    BulkAction::make("Change Status")
                         ->icon("heroicon-o-check-circle")
                         ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['status' => 'accept'])),
-                    BulkAction::make("Off")
-                        ->icon("heroicon-o-x-circle")
-                        ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['status' => 'off'])),
+                        ->form([
+                            Select::make("status")
+                                ->label("Status")
+                                ->options([
+                                    'accept' => "Accept",
+                                    "off" => "Off",
+                                    "move" => "Move",
+                                    "grade" => "Grade"
+                                ])
+                                ->required(),
+                        ])
+                        ->action(fn (Collection $records, array $data) => $records->each->update(['status' => $data['status']])),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
