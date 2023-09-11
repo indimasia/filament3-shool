@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 use stdClass;
+use Filament\Infolists\Components;
+use Filament\Infolists\Components\Fieldset;
 
 class StudentResource extends Resource
 {
@@ -153,10 +155,48 @@ class StudentResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make('nis')
-                    ->label('NIS'),
-                TextEntry::make('name')
-                    ->label('Nama Siswa'),
-            ])->columns(2);
+                Components\Section::make()
+                    ->schema([
+                        Fieldset::make('Biodata')
+                            ->schema([
+                                Components\Split::make([
+                                    Components\ImageEntry::make('profile')
+                                        ->hiddenLabel()
+                                        ->grow(false),
+                                    Components\Grid::make(2)
+                                        ->schema([
+                                            Components\Group::make([
+                                                Components\TextEntry::make('nis'),
+                                                Components\TextEntry::make('name'),
+                                                Components\TextEntry::make('gender'),
+                                                Components\TextEntry::make('birthday'),
+
+                                            ])
+                                            ->inlineLabel()
+                                            ->columns(1),
+
+                                            Components\Group::make([
+                                                Components\TextEntry::make('religion'),
+                                                Components\TextEntry::make('contact'),
+                                                Components\TextEntry::make('status')
+                                                ->badge()
+                                                ->color(fn (string $state): string => match ($state) {
+                                                    'accept' => 'success',
+                                                    'off' => 'danger',
+                                                    'grade' => 'success',
+                                                    'move' => 'warning',
+                                                    'wait' => 'gray'
+                                                }),
+                                                Components\ViewEntry::make('QRCode')
+                                                ->view('filament.resources.student-resource.qrcode'),
+                                            ])
+                                            ->inlineLabel()
+                                            ->columns(1),
+                                    ])
+
+                                ])->from('lg')
+                            ])->columns(1)
+                    ])->columns(2)
+            ]);
     }
 }

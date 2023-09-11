@@ -38,7 +38,7 @@ class CategoryNilaiResource extends Resource
                 Card::make()
                     ->schema([
                         TextInput::make('name')
-                            ->live()
+                            ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', \Str::slug($state))),
                         TextInput::make('slug')
                     ])

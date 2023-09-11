@@ -31,7 +31,7 @@ class ClassroomRelationManager extends RelationManager
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)->unique(Classroom::class, 'name')
-                            ->live()
+                            ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', \Str::slug($state))),
                         Hidden::make('slug'),
                     ])

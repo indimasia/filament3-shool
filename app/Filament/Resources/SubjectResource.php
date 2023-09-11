@@ -2,23 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ClassroomResource\Pages;
-use App\Filament\Resources\ClassroomResource\RelationManagers;
-use App\Filament\Resources\ClassroomResource\RelationManagers\SubjectRelationManager;
-use App\Models\Classroom;
+use App\Filament\Resources\SubjectResource\Pages;
+use App\Filament\Resources\SubjectResource\RelationManagers;
+use App\Models\Subject;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClassroomResource extends Resource
+class SubjectResource extends Resource
 {
-    protected static ?string $model = Classroom::class;
+    protected static ?string $model = Subject::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -26,14 +26,19 @@ class ClassroomResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                TextInput::make("kode")
+                    ->label("Kode")
                     ->autofocus()
                     ->required()
-                    ->unique(Classroom::class, 'name')
+                    ->unique(Subject::class, 'kode'),
+                TextInput::make('name')
+                    ->label("Mata Pelajaran")
+                    ->required()
+                    ->unique(Subject::class, 'name')
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', \Str::slug($state))),
                 TextInput::make('slug')
-                            
+                    
             ]);
     }
 
@@ -41,10 +46,16 @@ class ClassroomResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make("kode")
+                    ->label("Kode")
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make("name")
+                    ->label("Mata Pelajaran")
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make("slug")
+                    ->label("Slug")
                     ->searchable()
                     ->sortable(),
             ])
@@ -68,16 +79,7 @@ class ClassroomResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListClassroom::route('/'),
-            'create' => Pages\CreateClassroom::route('/create'),
-            'edit' => Pages\EditClassroom::route('/{record}/edit'),
+            'index' => Pages\ManageSubjects::route('/'),
         ];
     }    
-
-    public static function getRelations(): array
-    {
-        return [
-            SubjectRelationManager::class,
-        ];
-    }
 }

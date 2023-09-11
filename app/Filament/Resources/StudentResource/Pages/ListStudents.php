@@ -9,6 +9,8 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\View\View;
 use Excel;
+use Filament\Resources\Pages\ListRecords\Tab;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListStudents extends ListRecords
 {
@@ -33,5 +35,16 @@ class ListStudents extends ListRecords
         if($this->file) {
             Excel::import(new ImportStudents, $this->file);
         }
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make('All Students'),
+            'accept' => Tab::make('Accepted Students')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', "accept")),
+            'off' => Tab::make('Off Students')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', "off")),
+        ];
     }
 }
