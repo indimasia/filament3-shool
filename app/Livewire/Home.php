@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Student;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Livewire\Component;
 
 class Home extends Component implements HasForms
@@ -72,6 +74,11 @@ class Home extends Component implements HasForms
 
         // dd($data);
         Student::create($data);
+
+        Notification::make()
+            ->success()
+            ->title("Murid {$this->name} Telah Mendaftar")
+            ->sendToDatabase(User::role('admin')->get());
 
         $this->reset();
 
