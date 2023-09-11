@@ -15,11 +15,14 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 use stdClass;
 
 class StudentResource extends Resource
@@ -89,7 +92,10 @@ class StudentResource extends Resource
                 TextColumn::make("contact")
                     ->label("Kontak"),
                 Tables\Columns\ImageColumn::make('profile')
-                    ->label('Foto Siswa')
+                    ->label('Foto Siswa'),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->formatStateUsing(fn(string $state): string => ucwords("{$state}")),
             ])
             ->filters([
                 //
@@ -100,6 +106,14 @@ class StudentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make("Accept")
+                        ->icon("heroicon-o-check-circle")
+                        ->requiresConfirmation()
+                        ->action(fn (Collection $records) => $records->each->update(['status' => 'accept'])),
+                    BulkAction::make("Off")
+                        ->icon("heroicon-o-x-circle")
+                        ->requiresConfirmation()
+                        ->action(fn (Collection $records) => $records->each->update(['status' => 'off'])),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
