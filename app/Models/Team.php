@@ -7,17 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Teacher extends Model
+class Team extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'slug'
+    ];
 
-    function classroom() : HasMany {
-        return $this->hasMany(HomeRoom::class);
+    function members() : BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
-
-    // function team() : BelongsToMany {
-    //     return $this->belongsToMany(Team::class);
-    // }
 }
